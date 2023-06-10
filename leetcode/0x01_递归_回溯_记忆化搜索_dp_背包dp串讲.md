@@ -278,9 +278,7 @@ def f(n: int) -> int:
 ## dp
 实际上就是递归的正向推导过程。以上递归过程，自然地定义了一个状态转移方程
 
-$$
-f[n] = f[n - 1] + f[n - 2]
-$$
+$$ f[n] = f[n - 1] + f[n - 2] $$
 
 递归的方式是让计算机自动的根据状态转移方程去寻找它的依赖。而动态规划，则是自己处理好这里的依赖关系，通过写好的循环，从基本子问题，到最后的答案，来进行计算。
 
@@ -353,9 +351,7 @@ def zero_one_package(weights: List[int], values: List[int], volume: int) -> int:
 
 $f[i][w]$表示：可选物品范围是$[0, i]$时，容量为$w$的背包，装载的最大价值。则考虑第$i$个物品选或者不选，然后和只能选到在$[0, i - 1]$的最值构成如下关系
 
-$$
-f[i][w] = \max(v_i + f[i - 1][w - w_i], f[i - 1][w])
-$$
+$$ f[i][w] = \max(v_i + f[i - 1][w - w_i], f[i - 1][w]) $$
 
 用人话说一下这个公式就是，如果将第$i$个物品装进去，则它会给总价值额外带来$v_i$的提升，但同时也占用了背包的容量，也就等效于将背包的最大容量降低了$w_i$
 
@@ -386,9 +382,7 @@ def zero_one_package(weights: List[int], values: List[int], volume: int) -> int:
 
 在后一种递归的思路中，列出了递推的转换关系，这不难将它转换为动态规划。把状态转移方程再摘抄一遍
 
-$$
-f[i][w] = \max(v_i + f[i - 1][w - w_i], f[i - 1][w])
-$$
+$$ f[i][w] = \max(v_i + f[i - 1][w - w_i], f[i - 1][w]) $$
 
 在以下例程中，变量`dp_state[i]`实际对应的是$f[i + 1]$，这样不需要对初值做额外的初始化
 
@@ -462,15 +456,11 @@ def zero_one_package(weights: List[int], values: List[int], volume: int) -> int:
 
 如果我们写的是并行的程序，将状态方程：
 
-$$
-f[i][w] = \max(v_i + f[i - 1][w - w_i], f[i - 1][w])
-$$
+$$ f[i][w] = \max(v_i + f[i - 1][w - w_i], f[i - 1][w]) $$
 
 直接写成$W + 1$个并行的语句
 
-$$
-f[w] \leftarrow \max(v_i + f[w - w_i], f[w]), \forall w \in [0, W]
-$$
+$$ f[w] \leftarrow \max(v_i + f[w - w_i], f[w]), \forall w \in [0, W] $$
 
 这是可以的。
 
@@ -510,16 +500,12 @@ def zero_one_package(weights: List[int], values: List[int], volume: int) -> int:
 
 当列出的每个物品不止能选一个而是能无限地取出的时候，则称为完全背包问题。那直接将选与不选的思路拓展为选$0, 1,2,3,\dots$，就可以得到如下状态转移方程
 
-$$
-f[i][W] = \max_{k=0}^{\infty}(f[i-1][W-kw_i] + kv_i)
-$$
+$$ f[i][W] = \max_{k=0}^{\infty}(f[i-1][W-kw_i] + kv_i) $$
 如果重量最差为$1$，每个步骤求最大值的时候，也要枚举$W$个不同的$k$，那时间复杂度就来到了$O(nW^2)$，不是很划算
 
 但其实这个状态转移方程也可以这么写，是不选vs多选了一个`item[i]`
 
-$$
-f[i][W] = \max(f[i-1][W], f[i][W-w_i])
-$$
+$$ f[i][W] = \max(f[i-1][W], f[i][W-w_i]) $$
 
 但这样，我们就需要考虑在第$i$步的更新顺序了，考虑依赖关系，$f[i][W]$依赖之前步的$f[i - 1][W]$，和当前步更小容量的$f[i][W-w_i]$，所以更新顺序应该是从小容量更新到大容量(用不用滚动数组都得考虑)。而当$W - w_i$小于$0$时，最大值后面的函数取值是$-\infty$，自然只能取前面的这个。如果是非滚动数组的情况下，直接复制过到新的$i$，如果是滚动数组优化的话，可以考虑不改这一部分的结果，从$w_i$向上开始循环。并且时间复杂度也降回了$O(nW)$
 
@@ -541,9 +527,7 @@ def complete_package(weights: List[int], values: List[int], volume: int) -> int:
 
 或者用靠近完全背包的角度思考，这只是给完全背包问题递归的时候加上了一个上界$k_i$
 
-$$
-f[i][W] = \max_{k=0}^{k_i}(f[i-1][W-kw_i] + kv_i)
-$$
+$$ f[i][W] = \max_{k=0}^{k_i}(f[i-1][W-kw_i] + kv_i) $$
 
 但不管怎么样，其时间复杂度都是$O(W\sum_{i=1}^nk_k)$
 
